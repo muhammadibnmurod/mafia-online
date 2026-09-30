@@ -1,0 +1,18 @@
+# Render Blueprint — o'yin serveri (Socket.io).
+# Render.com → New → Blueprint → shu repozitoriyni tanlang.
+services:
+  - type: web
+    name: mafia-online-server
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Vercel sayt manzili (masalan https://mafia-online.vercel.app). Bo'sh qolsa — hamma domenga ruxsat.
+      - key: CLIENT_ORIGIN
+        sync: false
