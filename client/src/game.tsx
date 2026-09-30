@@ -5,6 +5,10 @@ import type { AckResult, ChatChannel, ClientState, JoinResult, PublicPlayer, Set
 // Prod'da (Vercel) server boshqa domenda turadi: VITE_SERVER_URL=https://....onrender.com
 // Dev rejimida bo'sh qoladi — Vite proxy orqali shu domenga ulanadi.
 const SERVER_URL = (import.meta.env.VITE_SERVER_URL as string | undefined)?.trim().replace(/\/+$/, '');
+// Taklif havolasi uchun saytning doimiy manzili. Vercel'dagi har bir deploy'ning o'z manzili
+// (masalan mafia-online-abc123-....vercel.app) himoyalangan — do'stlar u yerda login so'raladi.
+export const PUBLIC_URL =
+  (import.meta.env.VITE_PUBLIC_URL as string | undefined)?.trim().replace(/\/+$/, '') || location.origin;
 const socketOptions = { transports: ['websocket', 'polling'], reconnectionDelayMax: 4000 };
 const socket = SERVER_URL ? io(SERVER_URL, socketOptions) : io(socketOptions);
 

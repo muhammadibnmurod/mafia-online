@@ -1,6 +1,6 @@
 import { ROLE_INFO, buildRoleList } from '../../../shared/roles';
 import { LIMITS, type Role, type Settings } from '../../../shared/types';
-import { useGame, useGameState } from '../game';
+import { PUBLIC_URL, useGame, useGameState } from '../game';
 import { Avatar } from './Avatar';
 import { Chat } from './Chat';
 
@@ -22,7 +22,7 @@ export function Lobby() {
   const roles = buildRoleList(Math.max(n, LIMITS.minPlayers), state.settings);
   const counts = roles.reduce<Partial<Record<Role, number>>>((acc, r) => ({ ...acc, [r]: (acc[r] ?? 0) + 1 }), {});
 
-  const inviteUrl = `${location.origin}/?room=${state.code}`;
+  const inviteUrl = `${PUBLIC_URL}/?room=${state.code}`;
   const copy = async (text: string, msg: string) => {
     try {
       await navigator.clipboard.writeText(text);

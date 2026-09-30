@@ -55,8 +55,11 @@ git push -u origin main
 1. [vercel.com](https://vercel.com) → **Add New → Project** → `mafia-online` repozitoriyni import qiling.
 2. **Environment Variables** bo‘limiga qo‘shing:
    `VITE_SERVER_URL` = Render manzili (2-qadamdagi).
+   `VITE_PUBLIC_URL` = saytning doimiy manzili (masalan `https://mafia-online.vercel.app`) — taklif havolalari shu bilan yasaladi.
 3. **Deploy**. Sozlamalar `vercel.json` da tayyor.
 4. Chiqqan havolani (masalan `https://mafia-online.vercel.app`) do‘stlaringizga yuboring.
+
+> ⚠️ Vercel har bir deploy uchun alohida manzil ham beradi (`mafia-online-abc123-….vercel.app`). U manzillar **Deployment Protection** bilan yopiq — do‘stlaringizdan Vercel login so‘raladi. Doim **Settings → Domains** dagi asosiy (production) manzilni ishlating yoki **Settings → Deployment Protection → Vercel Authentication** ni o‘chiring.
 
 ### 4. (Ixtiyoriy) Xavfsizlik
 
