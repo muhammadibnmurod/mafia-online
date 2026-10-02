@@ -1,18 +1,17 @@
 import { PHASE_INFO, ROLE_INFO } from '../../../shared/roles';
 import { LIMITS, type Role } from '../../../shared/types';
-import { CardFan, Skyline } from './Scenery';
 
 const TEAMS: { key: 'mafia' | 'town'; title: string; note: string; roles: Role[] }[] = [
   {
     key: 'mafia',
     title: 'Mafiya jamoasi',
-    note: 'Bir-birini taniydi va tunda o‘z chatida kelishib oladi.',
+    note: 'Bir-birini taniydi. Tunda yashirincha kelishadi.',
     roles: ['don', 'mafia'],
   },
   {
     key: 'town',
     title: 'Tinch aholi',
-    note: 'Kim kimligini bilmaydi. Yagona quroli — muhokama va ovoz.',
+    note: 'Kim kimligini bilmaydi. Faqat suhbat va ovozga tayanadi.',
     roles: ['doctor', 'detective', 'civilian'],
   },
 ];
@@ -25,188 +24,226 @@ const MAFIA_TABLE = [
 ];
 
 const START = [
-  { title: 'Xona oching', text: 'Ismingizni yozing va “Yangi xona yaratish”ni bosing. Siz xona egasi bo‘lasiz.' },
-  { title: 'Do‘stlarni chaqiring', text: 'Xona kodini yoki havolani yuboring. Odam yetmasa, bot qo‘shishingiz mumkin.' },
-  { title: 'O‘yinni boshlang', text: 'Hamma yig‘ilgach, xona egasi o‘yinni boshlaydi va rollar yashirincha tarqatiladi.' },
+  { title: 'Xona oching', text: 'Ismingizni yozing. Xona kodi darhol tayyor bo‘ladi.' },
+  { title: 'Do‘stlarni chaqiring', text: 'Kod yoki havolani yuboring. Odam yetmasa, bot qo‘shing.' },
+  { title: 'Rollarni oling', text: 'Hamma yig‘ilgach, rollar yashirincha tarqatiladi.' },
 ];
 
 const DAY = [
   {
     phase: PHASE_INFO.night,
-    text: 'Mafiya qurbon tanlaydi, Don oxirgi so‘zni aytadi. Shifokor bir kishini davolaydi, Komissar bir kishini tekshiradi.',
+    text: 'Mafiya qurbon tanlaydi. Shifokor davolaydi, Komissar esa tekshiradi.',
   },
-  { phase: PHASE_INFO.morning, text: 'Shahar uyg‘onadi va tunda kim o‘lgani e’lon qilinadi.' },
-  { phase: PHASE_INFO.day, text: 'Hamma chatda muhokama qiladi: kim yolg‘on gapiryapti, kim juda jim?' },
+  { phase: PHASE_INFO.morning, text: 'Shahar uyg‘onadi va tun natijasi e’lon qilinadi.' },
+  { phase: PHASE_INFO.day, text: 'Davra gapiradi: kim yolg‘onchi, kim juda jim?' },
   {
     phase: PHASE_INFO.voting,
-    text: 'Ochiq ovoz beriladi. Eng ko‘p ovoz olgan o‘yinchi haydaladi, ovozlar teng bo‘lsa — hech kim. Keyin yana tun tushadi.',
+    text: 'Ochiq ovoz beriladi. Eng ko‘p ovoz olgan o‘yinchi davradan chiqadi.',
   },
 ];
 
+const SEATS = ['Siz', '?', '?', '?', '?', '?', '?', '?'];
+
 export function Landing({ onEnter }: { onEnter: () => void }) {
   return (
-    <div className="h l">
-      <nav className="l-nav">
-        <span className="l-brand">Mafia</span>
-        <div className="l-links">
+    <div className="site-page" id="top">
+      <header className="site-nav">
+        <a className="site-logo" href="#top" aria-label="Mafia bosh sahifasi">
+          <span aria-hidden>M</span>
+          <strong>Mafia</strong>
+        </a>
+        <nav className="site-links" aria-label="Asosiy navigatsiya">
           <a href="#haqida">O‘yin haqida</a>
           <a href="#rollar">Rollar</a>
           <a href="#qoidalar">Qoidalar</a>
-        </div>
-        <button className="h-btn h-btn-main l-nav-btn" onClick={onEnter}>
+        </nav>
+        <button className="site-nav-action" onClick={onEnter} type="button">
           O‘yinga kirish
         </button>
-      </nav>
-
-      <header className="l-hero">
-        <Skyline />
-        <div className="l-hero-in">
-          <div>
-            <h1 className="h-mark">Mafia</h1>
-            <p className="h-lede">Shahar uxlaydi. Mafiya uyg‘onadi.</p>
-            <p className="l-hero-sub">
-              Do‘stlar bilan brauzerda o‘ynaladigan yashirin rollar o‘yini. Boshlovchi kerak emas: tun, tong va ovoz
-              berishni o‘yin o‘zi olib boradi.
-            </p>
-            <div className="l-cta">
-              <button className="h-btn h-btn-main l-btn-big" onClick={onEnter}>
-                O‘yinga kirish
-              </button>
-              <a className="h-btn h-btn-line l-btn-big" href="#qoidalar">
-                Qanday o‘ynaladi
-              </a>
-            </div>
-          </div>
-          <div className="h-hand">
-            <CardFan />
-          </div>
-        </div>
       </header>
 
-      <section className="l-sec l-about" id="haqida">
-        <div>
-          <h2>O‘yin haqida</h2>
-          <p>
-            Mafia — bahs va aldov o‘yini. Har bir o‘yinchi yashirin karta oladi: kimdir mafiya, kimdir tinch aholi.
-            Tunda mafiya o‘z qurbonini tanlaydi, kunduzi esa shahar ularni muhokama va ovoz orqali topishga urinadi.
-          </p>
-          <p>Kim rost gapiryapti, kim o‘zini tinch aholi qilib ko‘rsatyapti — hammasi sizning sezgingizga bog‘liq.</p>
-        </div>
-        <dl className="l-facts">
-          <div>
-            <dt>O‘yinchilar</dt>
-            <dd>
-              {LIMITS.minPlayers} dan {LIMITS.maxPlayers} kishigacha. Odam yetmasa, xona egasi bot qo‘shadi.
-            </dd>
-          </div>
-          <div>
-            <dt>Kirish</dt>
-            <dd>Faqat ism yozasiz. Ro‘yxatdan o‘tish va parol yo‘q.</dd>
-          </div>
-          <div>
-            <dt>Chatlar</dt>
-            <dd>Umumiy chat, mafiyaning yashirin chati va o‘liklar chati.</dd>
-          </div>
-          <div>
-            <dt>Sozlamalar</dt>
-            <dd>Xona egasi muhokama, ovoz berish va tun vaqtini hamda qaysi rollar bo‘lishini tanlaydi.</dd>
-          </div>
-        </dl>
-      </section>
-
-      <section className="l-sec" id="rollar">
-        <h2>Rollar</h2>
-        <div className="l-teams">
-          {TEAMS.map((t) => (
-            <div key={t.key} className={`l-team team-${t.key}`}>
-              <h3>{t.title}</h3>
-              <p className="l-team-note">{t.note}</p>
-              <ul>
-                {t.roles.map((r) => (
-                  <li key={r}>
-                    <span className={`l-mini team-${t.key}`} aria-hidden>
-                      <b>{ROLE_INFO[r].name[0]}</b>
-                      {ROLE_INFO[r].icon}
-                    </span>
-                    <div>
-                      <strong>{ROLE_INFO[r].name}</strong>
-                      <p>{ROLE_INFO[r].description}</p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+      <main>
+        <section className="site-hero" aria-labelledby="hero-title">
+          <div className="site-hero-copy">
+            <p className="site-hero-note">Do‘stlar bilan onlayn Mafia</p>
+            <h1 id="hero-title">Shahar uxlaganda davra gapira boshlaydi.</h1>
+            <p className="site-hero-text">
+              Yashirin rollar, shubhali sukut va juda ishonchli yolg‘onlar. Boshlovchi kerak emas — tun, tong va
+              ovoz berishni o‘yin o‘zi olib boradi.
+            </p>
+            <div className="site-hero-actions">
+              <button className="site-button site-button-primary" onClick={onEnter} type="button">
+                Davraga qo‘shilish
+              </button>
+              <a className="site-button site-button-quiet" href="#qoidalar">
+                Avval qoidalarni ko‘rish
+              </a>
             </div>
-          ))}
-        </div>
-        <div className="l-count">
-          <p>Mafiya soni o‘yinchilar soniga qarab belgilanadi. Don 6 va undan ko‘p o‘yinchida paydo bo‘ladi.</p>
-          <table>
-            <thead>
-              <tr>
-                <th scope="col">O‘yinchilar</th>
-                <th scope="col">Mafiya</th>
-              </tr>
-            </thead>
-            <tbody>
-              {MAFIA_TABLE.map(([n, m]) => (
-                <tr key={n}>
-                  <td>{n}</td>
-                  <td>{m}</td>
-                </tr>
+            <p className="site-hero-detail">
+              {LIMITS.minPlayers}–{LIMITS.maxPlayers} o‘yinchi <span aria-hidden>/</span> Ro‘yxatdan o‘tishsiz
+            </p>
+          </div>
+
+          <div className="site-table-scene" aria-hidden>
+            <div className="site-table-glow" />
+            <div className="site-table">
+              <div className="site-table-center">
+                <span>Mafia</span>
+                <small>Har kim gumondor</small>
+              </div>
+              <div className="site-seats">
+                {SEATS.map((seat, index) => (
+                  <i key={index} className={index === 0 ? 'is-you' : index === 5 ? 'is-mafia' : ''}>
+                    {seat}
+                  </i>
+                ))}
+              </div>
+            </div>
+            <p className="site-table-caption">Bir stol. Ikki tomon. Hech kimga to‘liq ishonib bo‘lmaydi.</p>
+          </div>
+        </section>
+
+        <section className="site-section site-about" id="haqida">
+          <div className="site-section-title">
+            <h2>Oddiy qoida, qiyin tanlov.</h2>
+            <p>
+              Har bir o‘yinchi yashirin rol oladi. Mafiya tunda hujum qiladi, shahar esa kunduzi suhbat va ovoz
+              orqali ularni topishga urinadi.
+            </p>
+          </div>
+          <dl className="site-facts">
+            <div>
+              <dt>O‘yinchilar</dt>
+              <dd>{LIMITS.minPlayers} dan {LIMITS.maxPlayers} kishigacha. Odam yetmasa, bot qo‘shish mumkin.</dd>
+            </div>
+            <div>
+              <dt>Kirish</dt>
+              <dd>Faqat ism va xona kodi. Hisob ochish ham, parol ham yo‘q.</dd>
+            </div>
+            <div>
+              <dt>Suhbat</dt>
+              <dd>Umumiy chat, mafiyaning yashirin chati va o‘liklar chati.</dd>
+            </div>
+            <div>
+              <dt>Boshqaruv</dt>
+              <dd>Xona egasi vaqtlar, rollar va botlar sonini o‘zi tanlaydi.</dd>
+            </div>
+          </dl>
+        </section>
+
+        <section className="site-section site-roles" id="rollar">
+          <header className="site-section-heading">
+            <h2>Besh rol, ikki maqsad.</h2>
+            <p>Rolingiz sir qoladi. Gapirgan har bir so‘zingiz esa dalilga aylanishi mumkin.</p>
+          </header>
+
+          <div className="site-team-ledger">
+            {TEAMS.map((team) => (
+              <article key={team.key} className={`site-team team-${team.key}`}>
+                <header>
+                  <h3>{team.title}</h3>
+                  <p>{team.note}</p>
+                </header>
+                <ul>
+                  {team.roles.map((role) => (
+                    <li key={role}>
+                      <span className="site-role-letter" aria-hidden>{ROLE_INFO[role].name[0]}</span>
+                      <div>
+                        <strong>{ROLE_INFO[role].name}</strong>
+                        <p>{ROLE_INFO[role].description}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+
+          <div className="site-balance">
+            <p>
+              Mafiya soni davradagi odamlar soniga qarab o‘zgaradi. Don 6 va undan ko‘p o‘yinchi yig‘ilganda
+              paydo bo‘ladi.
+            </p>
+            <table>
+              <caption className="sr-only">O‘yinchilar soniga ko‘ra mafiya soni</caption>
+              <thead>
+                <tr><th scope="col">O‘yinchi</th><th scope="col">Mafiya</th></tr>
+              </thead>
+              <tbody>
+                {MAFIA_TABLE.map(([players, mafia]) => (
+                  <tr key={players}><td>{players}</td><td>{mafia}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="site-section site-rules" id="qoidalar">
+          <header className="site-section-heading">
+            <h2>O‘yinni boshlash oson.</h2>
+            <p>Uch qadamdan keyin davrada kim rost gapirayotganini aniqlash qoladi.</p>
+          </header>
+
+          <ol className="site-start-steps">
+            {START.map((step) => (
+              <li key={step.title}>
+                <strong>{step.title}</strong>
+                <p>{step.text}</p>
+              </li>
+            ))}
+          </ol>
+
+          <div className="site-cycle">
+            <div className="site-cycle-intro">
+              <h3>Bir kecha-kunduz</h3>
+              <p>O‘yin shu to‘rt holat orasida aylanadi. Kimdir chiqib ketadi, shubha esa qoladi.</p>
+            </div>
+            <ol>
+              {DAY.map((step) => (
+                <li key={step.phase.name}>
+                  <span>{step.phase.name}</span>
+                  <p>{step.text}</p>
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="l-sec" id="qoidalar">
-        <h2>Qanday o‘ynaladi</h2>
-        <h3 className="l-sub">Boshlash</h3>
-        <ol className="l-steps l-steps-3">
-          {START.map((s) => (
-            <li key={s.title}>
-              <strong>{s.title}</strong>
-              <p>{s.text}</p>
-            </li>
-          ))}
-        </ol>
-        <h3 className="l-sub">Bir kun qanday o‘tadi</h3>
-        <ol className="l-steps">
-          {DAY.map((s) => (
-            <li key={s.phase.name}>
-              <span className="l-step-icon" aria-hidden>
-                {s.phase.icon}
-              </span>
-              <strong>{s.phase.name}</strong>
-              <p>{s.text}</p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section className="l-sec">
-        <h2>Kim yutadi</h2>
-        <div className="l-win">
-          <div className="team-town">
-            <h3>Tinch aholi yutadi</h3>
-            <p>Shaharda bitta ham tirik mafiya qolmasa.</p>
+            </ol>
           </div>
-          <div className="team-mafia">
-            <h3>Mafiya yutadi</h3>
-            <p>Tirik mafiya soni qolgan o‘yinchilarnikiga teng yoki undan ko‘p bo‘lsa.</p>
-          </div>
-        </div>
-        <p className="l-note">
-          O‘lganlar gapira olmaydi, lekin hamma rollarni ko‘radi va “O‘liklar” chatida o‘zaro yozishadi.
-        </p>
-      </section>
+        </section>
 
-      <section className="l-final">
-        <h2>Bugun kechasi kim uxlamaydi?</h2>
-        <button className="h-btn h-btn-main l-btn-big" onClick={onEnter}>
-          O‘yinga kirish
-        </button>
-      </section>
+        <section className="site-section site-verdict">
+          <div className="site-verdict-title">
+            <h2>Oxirida faqat bir tomon qoladi.</h2>
+            <p>O‘lganlar gapira olmaydi, lekin o‘liklar chatida o‘yinni kuzatishda davom etadi.</p>
+          </div>
+          <div className="site-verdicts">
+            <div className="team-town">
+              <span>Tinch aholi</span>
+              <strong>Shaharda tirik mafiya qolmasa, yutadi.</strong>
+            </div>
+            <div className="team-mafia">
+              <span>Mafiya</span>
+              <strong>Mafiya soni qolganlarga tenglashsa, yutadi.</strong>
+            </div>
+          </div>
+        </section>
+
+        <section className="site-final">
+          <div>
+            <p>Bugun kechasi</p>
+            <h2>Kim uxlamaydi?</h2>
+          </div>
+          <button className="site-button site-button-primary" onClick={onEnter} type="button">
+            Xona ochish yoki qo‘shilish
+          </button>
+        </section>
+      </main>
+
+      <footer className="site-footer">
+        <a className="site-logo" href="#top" aria-label="Sahifa boshiga qaytish">
+          <span aria-hidden>M</span>
+          <strong>Mafia</strong>
+        </a>
+        <p>Do‘stlar davrasi uchun onlayn yashirin rollar o‘yini.</p>
+      </footer>
     </div>
   );
 }
